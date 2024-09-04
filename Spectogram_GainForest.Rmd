@@ -1,0 +1,72 @@
+---
+title: "Creating a Spectrogram Using R"
+output: 
+  pdf_document: 
+    fig_caption: true
+---
+
+Load libraries needed for the code
+
+```{r}
+library(seewave)
+library(tuneR)
+```
+
+Define path to audio file
+
+```{r}
+sound = ("C:/Users/Cessy/OneDrive/Documents/QGIS and R Files/Bioacoustics/20240824_180700.WAV")
+```
+
+Read in audio file. This helps in finding the signal to plot.
+
+```{r}
+forest = readWave(sound)
+forest
+```
+
+Set frequency levels
+
+```{r}
+forest <- fir(wave = forest,
+            from = 2000, # lower bound frequency in Hz
+            to = 6000, # upper bound frequency in Hz
+            bandpass = TRUE,
+            output = "Wave")
+```
+
+Check spectrogram
+
+```{r}
+spectro(wave=forest)
+```
+
+Modify.
+
+```{r}
+spectro(wave = forest,
+        flim = c(0,8), # frequency limits in kHz
+        scale = FALSE)
+```
+
+Plot.
+
+```{r}
+spectro(forest,
+        window = 512, # window length (determines frequency resolution)
+        steptime = 85, # percentage window overlap
+        collevels = seq(-100,0,10), # sets amplitude threshold and gradient levels for color
+        flim = c(0,20), # will change based on species
+        tlim = c(0,2), # will change based on species
+        palette=reverse.heat.colors,# makes the signal traces red and yellow
+        colbg = "white", #makes the background color white
+        collab = "black", #makes text black
+        colgrid = "gray" #makes grid colors gray
+)
+```
+
+Code References:
+
+Hansen Johnson. (2018, April 8). *Spectrograms in R*. <https://hansenjohnson.org/post/spectrograms-in-r/>
+
+Sueur, Jérôme. (2018). Sound analysis and synthesis with R. 10.1007/978-3-319-77647-7.
